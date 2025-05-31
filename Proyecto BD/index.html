@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tienda de Ropa</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <header>
+        <h1>Tienda de Ropa</h1>
+        <nav class="nav">
+            <ul class="nav__list">
+                <li class="nav__item"><a href="" class="nav__link">Inicio</a></li>
+                <li class="nav__item"><a href="" class="nav__link">Accesorios</a></li>
+                <li class="nav__item">
+                    <select class="nav__link">
+                        <option value="Categoria">Categoria</option>
+                        <option value="Categoria">Mas reciente</option>
+                        <option value="Categoria">Menos resiente</option>
+                        <option value="Categoria">Mas popular</option>
+                    </select>
+                </li>
+                <li class="nav__item">
+                    <select id="rolSelector" class="nav__link">
+                        <option value="usuario">Usuario</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </li>
+                <li class="nav__item"><a href="login.html" class="nav__link link--button">Log in</a></li>
+
+            </ul>
+        </nav>
+
+    </header>
+
+    <!-- Sección solo visible para administradores -->
+    <section id="adminPanel" class="oculto">
+        <h2>Agregar Prenda</h2>
+        <form id="formAgregar">
+            <input type="text" id="nombre" placeholder="Nombre de la prenda" required />
+            <input type="text" id="descripcion" placeholder="Descripción" required />
+            <input type="file" id="imagen" accept="image/*" required />
+            <button type="submit">Agregar</button>
+        </form>
+
+    </section>
+
+    <!-- Contenedor de tarjetas -->
+    <main id="contenedorRopa"></main>
+
+    <!-- Modal para ver prenda ampliada -->
+    <div id="modal" class="modal oculto">
+        <div class="modal-contenido">
+            <span id="cerrarModal" class="cerrar">&times;</span>
+            <img id="modalImg" src="" alt="Prenda ampliada" />
+            <h3 id="modalNombre"></h3>
+            <p id="modalDescripcion"></p>
+        </div>
+    </div>
+
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
