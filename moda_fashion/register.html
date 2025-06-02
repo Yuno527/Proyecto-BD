@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Moda Fashion</title>
+    <title>Registro - Moda Fashion</title>
     <link rel="stylesheet" href="style/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -12,19 +12,27 @@
         <div class="auth-box">
             <h1><i class="fas fa-tshirt"></i> Moda Fashion</h1>
             
-            <form id="loginForm" class="auth-form">
-                <h2>Iniciar Sesión</h2>
+            <form id="registerForm" class="auth-form">
+                <h2>Registrarse</h2>
                 <div class="form-group">
                     <i class="fas fa-user"></i>
-                    <input type="text" id="loginNombre" placeholder="Nombre de usuario" required>
+                    <input type="text" id="regNombre" placeholder="Nombre" required minlength="3">
                 </div>
                 <div class="form-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="loginPassword" placeholder="Contraseña" required>
+                    <input type="password" id="regPassword" placeholder="Contraseña" required minlength="6">
                 </div>
-                <button type="submit" class="auth-btn">Ingresar</button>
+                <div class="form-group">
+                    <i class="fas fa-home"></i>
+                    <input type="text" id="regDireccion" placeholder="Dirección" required>
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-birthday-cake"></i>
+                    <input type="number" id="regEdad" placeholder="Edad" required min="12" max="120">
+                </div>
+                <button type="submit" class="auth-btn">Registrarse</button>
                 <div class="auth-toggle">
-                    ¿No tienes cuenta? <a href="register.html">Regístrate aquí</a>
+                    ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
                 </div>
                 <div id="error-message" class="error-message"></div>
             </form>
@@ -32,6 +40,6 @@
     </div>
 
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="script/login.js"></script>
+    <script src="script/register.js"></script>
 </body>
 </html>
