@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModaFashion - Tienda de Ropa</title>
+    <link rel="stylesheet" href="style/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-tshirt"></i>
+                <span>ModaFashion</span>
+            </div>
+            
+            <nav class="nav">
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="#" class="nav__link">Inicio</a></li>
+                    <li class="nav__item"><a href="#" class="nav__link">Mujer</a></li>
+                    <li class="nav__item"><a href="#" class="nav__link">Hombre</a></li>
+                    <li class="nav__item"><a href="#" class="nav__link">Niños</a></li>
+                    <li class="nav__item">
+                        <select class="nav__link">
+                            <option value="Categoria">Categorías</option>
+                            <option value="Camisetas">Camisetas</option>
+                            <option value="Pantalones">Pantalones</option>
+                            <option value="Vestidos">Vestidos</option>
+                            <option value="Zapatos">Zapatos</option>
+                        </select>
+                    </li>
+                    <li class="nav__item">
+                        <a href="#" class="nav__link link--button">
+                            <i class="fas fa-shopping-cart"></i> Carrito
+                        </a>
+                    </li>
+                    <li class="nav__item" id="userNavItem">
+                        <!-- Info usuario se carga dinámicamente -->
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="adminPanel" class="oculto">
+        <h2><i class="fas fa-cog"></i> Panel de Administrador</h2>
+        <form id="formAgregar">
+            <input type="text" id="nombre" placeholder="Nombre de la prenda" required>
+            <input type="text" id="descripcion" placeholder="Descripción" required>
+            <input type="number" id="precio" placeholder="Precio" min="0" step="0.01" required>
+            <input type="number" id="stock" placeholder="Stock" min="0" required>
+            <select id="categoria" required>
+                <option value="">Seleccione categoría</option>
+                <option value="1">Camisetas</option>
+                <option value="2">Pantalones</option>
+                <option value="3">Vestidos</option>
+                <option value="4">Zapatos</option>
+            </select>
+            <input type="file" id="imagen" accept="image/*" required>
+            <button type="submit"><i class="fas fa-plus"></i> Agregar Producto</button>
+        </form>
+    </section>
+
+    <main id="contenedorRopa">
+        <!-- Productos se cargan dinámicamente -->
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-contenido">
+            <span id="cerrarModal" class="cerrar">&times;</span>
+            <img id="modalImg" src="" alt="Producto">
+            <h3 id="modalNombre"></h3>
+            <p id="modalDescripcion"></p>
+            <p class="precio" id="modalPrecio"></p>
+            <button id="addToCart"><i class="fas fa-shopping-cart"></i> Añadir al carrito</button>
+        </div>
+    </div>
+
+    <div id="xampp-info">Conectado a XAMPP: moda_fashion</div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
