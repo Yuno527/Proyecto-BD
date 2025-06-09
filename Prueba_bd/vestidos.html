@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vestidos - ModaFashion</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-tshirt"></i>
+                <span>ModaFashion</span>
+            </a>
+            <nav>
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="index.html" class="nav__link">Inicio</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="camisetas.html" class="nav__link">Camisetas</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="pantalones.html" class="nav__link">Pantalones</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="vestidos.html" class="nav__link">Vestidos</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="zapatos.html" class="nav__link">Zapatos</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="carrito.html" class="nav__link link--button">
+                            <i class="fas fa-shopping-cart"></i> Carrito
+                            <span id="carritoContador" class="carrito-contador"></span>
+                        </a>
+                    </li>
+                    <li class="nav__item" id="userNavItem">
+                        <!-- Aquí se insertará dinámicamente la info del usuario -->
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="categoria-page">
+        <div class="categoria-header">
+            <h1><i class="fas fa-tshirt"></i> Vestidos</h1>
+            <p>Nuestra colección de vestidos</p>
+        </div>
+
+        <div id="contenedorRopa" class="productos-container">
+            <!-- Los productos se cargarán aquí dinámicamente -->
+        </div>
+    </main>
+
+    <script src="categoria.js"></script>
+    <script src="carrito.js"></script>
+</body>
+</html>

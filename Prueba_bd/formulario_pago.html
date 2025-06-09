@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago - ModaFashion</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Información de Pago</h2>
+        <div id="mensaje-error" class="error-message" style="display: none;"></div>
+        <div id="mensaje-exito" class="success-message" style="display: none;"></div>
+        
+        <!-- Resumen de productos -->
+        <div class="resumen-productos">
+            <h3>Resumen de tu compra</h3>
+            <div id="lista-productos" class="lista-productos">
+                <!-- Los productos se cargarán aquí dinámicamente -->
+            </div>
+            <div class="total-compra">
+                <span>Total a pagar:</span>
+                <span id="total-pagar">$0.00</span>
+            </div>
+        </div>
+        
+        <form id="pagoForm" class="pago-form">
+            <div class="form-group">
+                <label for="nombre_prop">Nombre en la Tarjeta:</label>
+                <input type="text" id="nombre_prop" name="nombre_prop" required 
+                       pattern="[A-Za-z\s]+" title="Solo letras y espacios permitidos">
+                <i class="fas fa-user"></i>
+            </div>
+            
+            <div class="form-group">
+                <label for="no_tarjeta">Número de Tarjeta:</label>
+                <input type="text" id="no_tarjeta" name="no_tarjeta" maxlength="16" required
+                       title="Debe contener exactamente 16 dígitos">
+                <i class="fas fa-credit-card"></i>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fecha_ven">Fecha de Vencimiento:</label>
+                    <input type="text" id="fecha_ven" name="fecha_ven" placeholder="MM/AA" maxlength="5" required
+                           pattern="(0[1-9]|1[0-2])\/([0-9]{2})" title="Formato: MM/AA">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cvv">CVV:</label>
+                    <input type="text" id="cvv" name="cvv" maxlength="4" required
+                           pattern="[0-9]{3,4}" title="Debe contener 3 o 4 dígitos">
+                    <i class="fas fa-lock"></i>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-pagar">
+                <i class="fas fa-lock"></i> Pagar Ahora
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Función para mostrar mensajes de error
+        function mostrarError(mensaje) {
+            const errorDiv = document.getElementById('mensaje-error');
+            errorDiv.textContent = mensaje;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Función para mostrar mensajes de éxito
+        function mostrarExito(mensaje) {
+            const exitoDiv = document.getElementById('mensaje-exito');
+            exitoDiv.textContent = mensaje;
+            exitoDiv.style.display = 'block';
+        }
+
+        // Función para formatear precio
+        function formatearPrecio(precio) {
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN'
+            }).format(precio);
+        }
+
+        // Cargar productos del carrito al iniciar la página
+        async function cargarProductosCarrito() {
+            try {
+                const response = await fetch('carrito_operations.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'obtener'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al obtener el carrito');
+                }
+
+                if (!data.productos || data.productos.length === 0) {
+                    mostrarError('El carrito está vacío');
+                    window.location.href = 'carrito.html';
+                    return;
+                }
+
+                // Mostrar productos en el resumen
+                const listaProductos = document.getElementById('lista-productos');
+                let total = 0;
+
+                data.productos.forEach(producto => {
+                    const subtotal = producto.precio * producto.cantidad;
+                    total += subtotal;
+
+                    const productoElement = document.createElement('div');
+                    productoElement.className = 'producto-resumen';
+                    productoElement.innerHTML = `
+                        <div class="producto-info">
+                            <img src="uploads/${producto.imagen}" alt="${producto.nombre}" class="producto-imagen">
+                            <div class="producto-detalles">
+                                <h4>${producto.nombre}</h4>
+                                <p>Cantidad: ${producto.cantidad}</p>
+                                <p>Precio unitario: ${formatearPrecio(producto.precio)}</p>
+                            </div>
+                        </div>
+                        <div class="producto-subtotal">
+                            ${formatearPrecio(subtotal)}
+                        </div>
+                    `;
+                    listaProductos.appendChild(productoElement);
+                });
+
+                // Actualizar total
+                document.getElementById('total-pagar').textContent = formatearPrecio(total);
+
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarError('Error al cargar los productos del carrito');
+            }
+        }
+
+        // Cargar productos al iniciar
+        document.addEventListener('DOMContentLoaded', cargarProductosCarrito);
+
+        // Manejar el envío del formulario
+        document.getElementById('pagoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const botonPagar = document.querySelector('.btn-pagar');
+            const textoOriginal = botonPagar.innerHTML;
+            
+            try {
+                // Verificar sesión
+                const authResponse = await fetch('verificar_sesion.php');
+                const authData = await authResponse.json();
+                
+                if (!authData.logged_in) {
+                    mostrarError('Debes iniciar sesión para realizar el pago');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Obtener el carrito
+                const carritoResponse = await fetch('carrito_operations.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'obtener'
+                    })
+                });
+
+                const carritoData = await carritoResponse.json();
+                
+                if (!carritoData.success) {
+                    throw new Error(carritoData.message || 'Error al obtener el carrito');
+                }
+
+                if (!carritoData.productos || carritoData.productos.length === 0) {
+                    mostrarError('El carrito está vacío');
+                    return;
+                }
+
+                // Mostrar indicador de carga
+                botonPagar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+                botonPagar.disabled = true;
+
+                // Preparar los datos del pago
+                const productos = carritoData.productos.map(producto => ({
+                    id_producto: producto.id_producto,
+                    cantidad: producto.cantidad
+                }));
+
+                // Llamar al procedimiento de pago
+                const response = await fetch('procesar_pago.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_usuario: authData.usuario.id_usuario,
+                        productos: productos
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    mostrarExito('Pago procesado correctamente');
+                    // Limpiar el carrito
+                    await fetch('carrito_operations.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            action: 'limpiar'
+                        })
+                    });
+                    
+                    // Redirigir después de 2 segundos
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } else {
+                    throw new Error(data.message || 'Error al procesar el pago');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarError(error.message);
+                botonPagar.innerHTML = textoOriginal;
+                botonPagar.disabled = false;
+            }
+        });
+
+        // Formatear fecha de vencimiento
+        document.getElementById('fecha_ven').addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0,2) + '/' + value.slice(2);
+            }
+            this.value = value;
+        });
+
+        // Formatear CVV
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+    </script>
+</body>
+</html> 

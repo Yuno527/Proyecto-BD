@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas - ModaFashion</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-tshirt"></i>
+                <span>ModaFashion</span>
+            </a>
+            <nav>
+                <ul class="nav__list">
+                    <li class="nav__item">
+                        <a href="index.html" class="nav__link">Inicio</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="camisetas.html" class="nav__link">Camisetas</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="pantalones.html" class="nav__link">Pantalones</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="vestidos.html" class="nav__link">Vestidos</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="zapatos.html" class="nav__link">Zapatos</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="carrito.html" class="nav__link link--button">
+                            <i class="fas fa-shopping-cart"></i> Carrito
+                            <span id="carritoContador" class="carrito-contador"></span>
+                        </a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="estadisticas.html" class="nav__link active">
+                            <i class="fas fa-chart-bar"></i> Estadísticas
+                        </a>
+                    </li>
+                    <li class="nav__item" id="userNavItem">
+                        <!-- Aquí se insertará dinámicamente la info del usuario -->
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="estadisticas-section">
+            <h3>
+                <i class="fas fa-chart-line"></i>
+                Estadísticas por Categoría
+            </h3>
+            <div id="estadisticasContainer" class="estadisticas-container">
+                <!-- Las estadísticas se cargarán aquí dinámicamente -->
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Cargar estadísticas cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Verificar si el usuario está autenticado y es administrador
+                const response = await fetch('verificar_sesion.php');
+                const data = await response.json();
+                
+                if (!data.logged_in) {
+                    mostrarMensaje('Por favor, inicie sesión para ver las estadísticas.', 'error');
+                    return;
+                }
+                
+                if (data.usuario.rol !== 'admin') {
+                    mostrarMensaje('Acceso denegado. Esta sección es solo para administradores.', 'error');
+                    return;
+                }
+                
+                // Si el usuario es administrador, cargar las estadísticas
+                cargarEstadisticasCategorias();
+            } catch (error) {
+                console.error('Error al verificar sesión:', error);
+                mostrarMensaje('Error al verificar la sesión.', 'error');
+            }
+        });
+
+        function mostrarMensaje(mensaje, tipo) {
+            const container = document.getElementById('estadisticasContainer');
+            container.innerHTML = `
+                <div class="estadistica-mensaje ${tipo === 'error' ? 'error-message' : 'success-message'}">
+                    <i class="fas fa-${tipo === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <p>${mensaje}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html> 

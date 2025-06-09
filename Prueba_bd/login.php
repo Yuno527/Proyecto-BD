@@ -2,18 +2,20 @@
 header('Content-Type: application/json');
 session_start();
 
-// Mostrar errores (solo para desarrollo)
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// Limpiar cualquier salida anterior
+ob_clean();
+
+// Destruir la sesión anterior si existe
+if (isset($_SESSION)) {
+    session_destroy();
+    session_start();
+}
 
 $response = ['success' => false];
 
-// Obtener datos del POST y mostrar para depuración
+// Obtener datos del POST
 $raw_data = file_get_contents('php://input');
 $data = json_decode($raw_data, true);
-
-// Log para depuración
-error_log("Datos recibidos: " . print_r($raw_data, true));
 
 if (!$data) {
     $response['message'] = "No se recibieron datos o el formato es incorrecto";
@@ -23,10 +25,6 @@ if (!$data) {
 
 $nombre = trim($data['nombre'] ?? '');
 $password = trim($data['password'] ?? '');
-
-// Log para depuración
-error_log("Nombre: " . $nombre);
-error_log("Password: " . $password);
 
 if (empty($nombre) || empty($password)) {
     $response['message'] = "Por favor complete todos los campos";
@@ -43,35 +41,46 @@ try {
     $conn = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    // Restaurar la consulta completa incluyendo el rol
+    // Consulta para obtener el usuario incluyendo el rol
     $stmt = $conn->prepare("SELECT id_usuario, nombre, contraseña, direccion, edad, rol FROM usuarios WHERE nombre = :nombre");
     $stmt->execute(['nombre' => $nombre]);
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    // Log para depuración
-    error_log("Usuario encontrado: " . print_r($usuario, true));
-    
     if ($usuario && $password === $usuario['contraseña']) {
-        // Limpiar datos sensibles antes de guardar en sesión
+        // Limpiar datos sensibles
         unset($usuario['contraseña']);
+        
+        // Asegurar que el rol esté definido y sea válido
+        if (!isset($usuario['rol']) || empty($usuario['rol'])) {
+            $usuario['rol'] = 'usuario'; // Rol por defecto
+        }
+        
+        // Normalizar el rol
+        $usuario['rol'] = strtolower(trim($usuario['rol']));
+        
+        // Verificar que el rol sea válido
+        if ($usuario['rol'] !== 'admin' && $usuario['rol'] !== 'usuario') {
+            $usuario['rol'] = 'usuario'; // Forzar rol por defecto si no es válido
+        }
         
         // Guardar usuario en sesión
         $_SESSION['usuario'] = $usuario;
+        $_SESSION['id_usuario'] = $usuario['id_usuario'];
         
         $response['success'] = true;
         $response['message'] = "Inicio de sesión exitoso";
         $response['usuario'] = $usuario;
+        
+        // Log para depuración
+        error_log("Usuario logueado: " . $usuario['nombre'] . " con rol: " . $usuario['rol']);
     } else {
         $response['message'] = "Usuario o contraseña incorrectos";
-        $response['debug'] = [
-            'usuario_encontrado' => !empty($usuario),
-            'password_coincide' => $usuario && $password === $usuario['contraseña']
-        ];
     }
 } catch(PDOException $e) {
     $response['message'] = "Error de conexión: " . $e->getMessage();
-    error_log("Error de base de datos: " . $e->getMessage());
+    error_log("Error en login.php: " . $e->getMessage());
 }
 
 echo json_encode($response);
+exit;
 ?>

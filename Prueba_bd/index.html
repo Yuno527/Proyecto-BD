@@ -14,29 +14,36 @@
 <body>
     <header>
         <div class="header-container">
-            <div class="logo">
+            <a href="index.html" class="logo">
                 <i class="fas fa-tshirt"></i>
                 <span>ModaFashion</span>
-            </div>
-
-            <nav class="nav">
+            </a>
+            <nav>
                 <ul class="nav__list">
-                    <li class="nav__item"><a href="#" class="nav__link">Inicio</a></li>
-                    <li class="nav__item"><a href="#" class="nav__link">Mujer</a></li>
-                    <li class="nav__item"><a href="#" class="nav__link">Hombre</a></li>
-                    <li class="nav__item"><a href="#" class="nav__link">Niños</a></li>
                     <li class="nav__item">
-                        <select class="nav__link">
-                            <option value="Categoria">Categorías</option>
-                            <option value="Camisetas">Camisetas</option>
-                            <option value="Pantalones">Pantalones</option>
-                            <option value="Vestidos">Vestidos</option>
-                            <option value="Zapatos">Zapatos</option>
-                        </select>
+                        <a href="index.html" class="nav__link">Inicio</a>
                     </li>
                     <li class="nav__item">
-                        <a href="#" class="nav__link link--button">
+                        <a href="camisetas.html" class="nav__link">Camisetas</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="pantalones.html" class="nav__link">Pantalones</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="vestidos.html" class="nav__link">Vestidos</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="zapatos.html" class="nav__link">Zapatos</a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="carrito.html" class="nav__link link--button">
                             <i class="fas fa-shopping-cart"></i> Carrito
+                            <span id="carritoContador" class="carrito-contador"></span>
+                        </a>
+                    </li>
+                    <li class="nav__item">
+                        <a href="estadisticas.html" class="nav__link">
+                            <i class="fas fa-chart-bar"></i> Estadísticas
                         </a>
                     </li>
                     <li class="nav__item" id="userNavItem">
@@ -47,27 +54,40 @@
         </div>
     </header>
 
-
     <!-- Panel de Administrador -->
     <section id="adminPanel" class="oculto">
         <h2><i class="fas fa-cog"></i> Panel de Administrador</h2>
-        <form id="formAgregar" enctype="multipart/form-data" method="POST">
-            <input type="text" id="nombre" placeholder="Nombre de la prenda" required>
-            <input type="text" id="descripcion" placeholder="Descripción" required>
-            <input type="number" id="precio" placeholder="Precio" min="0" step="0.01" required>
-            <input type="number" id="stock" placeholder="Stock" min="0" required>
-            <select id="categoria" required>
-                <option value="">Seleccione categoría</option>
-                <option value="1">Camisetas</option>
-                <option value="2">Pantalones</option>
-                <option value="3">Vestidos</option>
-                <option value="4">Zapatos</option>
-            </select>
-            <input type="file" id="imagen" accept="image/*" required>
-            <button type="submit"><i class="fas fa-plus"></i> Agregar Producto</button>
-        </form>
-    </section>
+        
+        <!-- Navegación del administrador -->
+        <nav class="admin-nav">
+            <ul>
+                <li>
+                    <a href="#" class="admin-nav-link active" data-section="productos">
+                        <i class="fas fa-box"></i> Productos
+                    </a>
+                </li>
+            </ul>
+        </nav>
 
+        <!-- Sección de Productos -->
+        <div id="productosSection" class="admin-section">
+            <form id="formAgregar" enctype="multipart/form-data" method="POST">
+                <input type="text" id="nombre" placeholder="Nombre de la prenda" required>
+                <input type="text" id="descripcion" placeholder="Descripción" required>
+                <input type="number" id="precio" placeholder="Precio" min="0" step="0.01" required>
+                <input type="number" id="stock" placeholder="Stock" min="0" required>
+                <select id="categoria" required>
+                    <option value="">Seleccione categoría</option>
+                    <option value="1">Camisetas</option>
+                    <option value="2">Pantalones</option>
+                    <option value="3">Vestidos</option>
+                    <option value="4">Zapatos</option>
+                </select>
+                <input type="file" id="imagen" accept="image/*" required>
+                <button type="submit"><i class="fas fa-plus"></i> Agregar Producto</button>
+            </form>
+        </div>
+    </section>
 
     <!-- Contenedor de productos -->
     <main id="contenedorRopa">
@@ -86,7 +106,75 @@
         </div>
     </div>
 
+    <!-- Modal de Pago -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-contenido payment-modal">
+            <span class="cerrar" id="cerrarPaymentModal">&times;</span>
+            <div class="payment-container">
+                <div class="credit-card">
+                    <div class="card-front">
+                        <div class="card-logo">
+                            <i class="fab fa-cc-visa"></i>
+                        </div>
+                        <div class="card-number">
+                            <span id="cardNumber">**** **** **** ****</span>
+                        </div>
+                        <div class="card-info">
+                            <div class="card-holder">
+                                <span class="label">Titular</span>
+                                <span id="cardHolder">NOMBRE TITULAR</span>
+                            </div>
+                            <div class="card-expiry">
+                                <span class="label">Expira</span>
+                                <span id="cardExpiry">MM/AA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form id="paymentForm" class="payment-form">
+                    <div class="form-group">
+                        <label for="cardNumberInput">Número de Tarjeta</label>
+                        <input type="text" id="cardNumberInput" maxlength="19" placeholder="1234 5678 9012 3456" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardHolderInput">Nombre del Titular</label>
+                        <input type="text" id="cardHolderInput" placeholder="NOMBRE COMO APARECE EN LA TARJETA" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cardExpiryInput">Fecha de Expiración</label>
+                            <input type="text" id="cardExpiryInput" maxlength="5" placeholder="MM/AA" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardCvvInput">CVV</label>
+                            <input type="text" id="cardCvvInput" maxlength="3" placeholder="123" required>
+                        </div>
+                    </div>
+                    <div class="payment-total">
+                        <span>Total a Pagar:</span>
+                        <span id="paymentTotal">$0.00</span>
+                    </div>
+                    <button type="submit" class="pay-button">
+                        <i class="fas fa-lock"></i> Pagar Ahora
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="carrito.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Eliminar el script duplicado de verificarAdminPanel aquí
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     console.log('DOM cargado - Iniciando verificación de panel de administrador');
+        //     verificarAdminPanel();
+        // });
+        // window.addEventListener('load', () => {
+        //     console.log('Página cargada - Verificando panel de administrador');
+        //     verificarAdminPanel();
+        // });
+    </script>
 </body>
 
 </html>

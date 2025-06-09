@@ -1,11 +1,8 @@
 <?php
-header('Content-Type: application/json'); // Debe ir al principio
+header('Content-Type: application/json'); 
 
 $response = ['success' => false];
 
-// Mostrar errores (solo para desarrollo)
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
 // Verificar si el usuario está autenticado y es administrador
 session_start();
